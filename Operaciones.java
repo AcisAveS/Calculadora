@@ -1,33 +1,34 @@
 public class Operaciones {
 
-    Operaciones(String operador, double primerValor, double segundoValor) {
-
+    public double RealizarOperacion(String operador, double primerValor, double segundoValor) {
+        double resultado = 0;
         switch (operador) {
             case "+":
-                Suma(primerValor, segundoValor);
+                resultado = Suma(primerValor, segundoValor);
                 break;
             case "-":
-                Resta(primerValor, segundoValor);
+                resultado = Resta(primerValor, segundoValor);
                 break;
             case "/":
-                Division(primerValor, segundoValor);
+                resultado = Division(primerValor, segundoValor);
                 break;
             case "x":
-                Multiplicacion(primerValor, segundoValor);
+                resultado = Multiplicacion(primerValor, segundoValor);
                 break;
             case "x\u00B2":
-                Cuadratica(primerValor);
+                resultado = Cuadratica(primerValor);
                 break;
             case "\u221Ax":
-                Raiz(primerValor);
+                resultado = Raiz(primerValor);
                 break;
             case "x\u02B8":
-                ElevadaY(primerValor, segundoValor);
+                resultado = ElevadaY(primerValor, segundoValor);
                 break;
             case "%":
-                Porcentaje(primerValor);
+                resultado = Porcentaje(primerValor);
                 break;
         }
+        return resultado;
     }
 
     private double Suma(double primerValor, double segundoValor) {
