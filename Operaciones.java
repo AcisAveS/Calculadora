@@ -13,7 +13,7 @@ public class Operaciones {
             case "/":
                 resultado = Division(primerValor, segundoValor);
                 break;
-            case "x":
+            case "X":
                 resultado = Multiplicacion(primerValor, segundoValor);
                 break;
             case "x\u00B2":
