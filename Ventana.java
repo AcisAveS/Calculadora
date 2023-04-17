@@ -19,6 +19,7 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
 
     private JLabel valor = new JLabel("0");
     private double primerValor = 0;
+    private String operador = null;
 
     public static void main(String args[]) {
         // Definir el tipo de fuente, estilo y tamaño a todos los botones y campos
@@ -52,7 +53,7 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
 
         /*
          * Operadores
-         * lenguaje Unicode para mostrar el valor de x elevado a la x 02B8
+         * lenguaje Unicode para mostrar el valor de x elevado a la y 02B8
          * lenguaje Unicode para mostrar el valor de x al cuadrado u00B2
          * lenguaje Unicode para mostrar raiz cuadrada de x u221A
          */
@@ -138,6 +139,8 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
         String val = ((JButton) e.getSource()).getName();
 
         if (Character.isDigit(val.toCharArray()[0])) {
+            // Se seguiran concatenando los valores al
+            // campo texto hasta que se presiones un operador
 
             if (valor.getText() != "0") {
                 String concatenar = valor.getText();
@@ -147,20 +150,42 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
             }
 
         } else {
-            if (val == "CE") {
 
+            if (val == "CE") {
+                // Limpia el valor introducido
                 valor.setText("0");
 
             } else if (val == "C") {
-
+                // Limpia todo,valor guardado y
+                // el campo texto dejandolo en 0
                 valor.setText("0");
                 primerValor = 0;
 
             } else {
-                if (primerValor != 0) {
 
+                operador = (val != "=") ? val : operador; // Se guarda el operado presionado en la variable operador
+
+                // Se guardo el numero escrito en la variado primerValor
+                if (primerValor == 0 ||
+                        operador.compareTo("x\u00B2") == 0 ||
+                        operador.compareTo("\u221Ax") == 0)
+                    primerValor = Double.parseDouble(valor.getText());
+
+                // Operadores de elevado al cuadrado y raiz cuadrada que no requieren de un
+                // segundo valor
+                if (operador.compareTo("x\u00B2") == 0 ||
+                        operador.compareTo("\u221Ax") == 0) {
+
+                    valor.setText(new Operaciones().RealizarOperacion(operador, primerValor, 0) + "");
+
+                } else if (val == "=") {
+                    valor.setText(new Operaciones().RealizarOperacion(operador, primerValor,
+                            Double.parseDouble(valor.getText())) + "");
+
+                } else {
+                    valor.setText("0");
                 }
-                primerValor = Double.parseDouble(valor.getText());
+
             }
         }
     }
