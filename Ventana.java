@@ -1,25 +1,27 @@
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 
 public class Ventana extends javax.swing.JFrame implements ActionListener {
 
     private JLabel valor = new JLabel("0");
     private double primerValor = 0;
     private String operador = null;
+    private boolean resultado = false;
 
     public static void main(String args[]) {
         // Definir el tipo de fuente, estilo y tamaño a todos los botones y campos
@@ -31,7 +33,7 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
     Ventana() {
         super("Calculadora Simple");
 
-        estilizarCampo();
+        EstilizarCampo();
 
         add(Contenedor());
 
@@ -62,6 +64,9 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
         for (String e : op)
             operadores.add(e);
 
+        // Valores iniciales y predeterminado para acomodar los objetos en la tabla
+        // tambien contiene los valores predeterminados del espaciado y tamaño de las
+        // celdas
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.ipadx = 30;
@@ -70,14 +75,13 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 4, 4, 4);
 
+        // Iteracion para agregar los primero 6 operadores a las celdas
         for (int i = 0; i <= 6; i++) {
 
             switch (i) {
                 case 1:
                     gbc.gridx = 2;
                     gbc.gridwidth = 1;
-                    break;
-                case 2:
                     break;
                 case 3:
                     gbc.gridx = 0;
@@ -95,12 +99,16 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
         gbc.gridx = 0;
         gbc.gridy = 2;
 
+        // Iteracion para agregar los numero de la calcul
         for (int i = 9; i >= 0; i--) {
+
             numeros[i] = Boton(numeros[i], i + "");
             botones.add(numeros[i], gbc);
-
             gbc.gridx++;
 
+            // Condicion para agregar en la cuarta columna los operadores restantes
+            // tambien suma otra posicion en tabla en el eje y, es decir,
+            // se agrega otra columna
             if (gbc.gridx == 3) {
                 operaciones[cont] = Boton(operaciones[cont], operadores.get(0));
                 botones.add(operaciones[cont], gbc);
@@ -126,6 +134,7 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
         return botones;
     }
 
+    // Panel exclusivo para acomodor el campo de texto y los botones
     private JPanel Contenedor() {
         JPanel contenedor = new JPanel(new BorderLayout());
 
@@ -136,11 +145,18 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+
         String val = ((JButton) e.getSource()).getName();
 
         if (Character.isDigit(val.toCharArray()[0])) {
+
+            if (resultado) {
+                valor.setText("0");
+                primerValor = 0;
+                resultado = false;
+            }
             // Se seguiran concatenando los valores al
-            // campo texto hasta que se presiones un operador
+            // campo texto hasta que se presiones un operador0
 
             if (valor.getText() != "0") {
                 String concatenar = valor.getText();
@@ -161,11 +177,23 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
                 valor.setText("0");
                 primerValor = 0;
 
+            } else if (val == "." && !valor.getText().contains(".")) {
+                // Agregar el punto decimal cuando se presione el boton y a su vez verificar que
+                // no lo tengas
+
+                String concatenar = valor.getText();
+                valor.setText(concatenar += ".");
+
+            } else if (valor.getText().contains(".") && val == ".") {
+                JOptionPane.showMessageDialog(null,
+                        "Ya existe un punto decimal",
+                        "Advertencia",
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
+                // Se guarda el operado presionado en la variable operador
+                operador = (val != "=") ? val : operador;
 
-                operador = (val != "=") ? val : operador; // Se guarda el operado presionado en la variable operador
-
-                // Se guardo el numero escrito en la variado primerValor
+                // Se guardo el numero escrito en la variable primerValor
                 if (primerValor == 0 ||
                         operador.compareTo("x\u00B2") == 0 ||
                         operador.compareTo("\u221Ax") == 0)
@@ -174,7 +202,8 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
                 // Operadores de elevado al cuadrado y raiz cuadrada que no requieren de un
                 // segundo valor
                 if (operador.compareTo("x\u00B2") == 0 ||
-                        operador.compareTo("\u221Ax") == 0) {
+                        operador.compareTo("\u221Ax") == 0 ||
+                        operador.compareTo("%") == 0) {
 
                     valor.setText(new Operaciones().RealizarOperacion(operador, primerValor, 0) + "");
 
@@ -182,11 +211,17 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
                     valor.setText(new Operaciones().RealizarOperacion(operador, primerValor,
                             Double.parseDouble(valor.getText())) + "");
 
+                    resultado = true;
+
+                    // Se guarda nuevamente el valor en caso de que el usuario quiera seguir
+                    // realizando operaciones
+                    primerValor = Double.parseDouble(valor.getText());
                 } else {
                     valor.setText("0");
                 }
-
             }
+
+            valor.setText((valor.getText() == "Infinity") ? "\u221E" : valor.getText());
         }
     }
 
@@ -199,8 +234,10 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
         return boton;
     }
 
-    private void estilizarCampo() {
+    // Estiliza el campo de texto que muestra los numeros y el resultado
+    private void EstilizarCampo() {
         valor.setPreferredSize(new Dimension(getSize().width, 80));
+        valor.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         valor.setHorizontalAlignment(JLabel.RIGHT);
         valor.setOpaque(true);
     }
