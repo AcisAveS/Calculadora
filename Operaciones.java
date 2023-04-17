@@ -51,7 +51,7 @@ public class Operaciones {
         while ((segundoValor -= 1) > 0) {
             nuevoValor *= primerValor;
         }
-        return primerValor;
+        return nuevoValor;
     }
 
     private double Cuadratica(double primerValor) {
