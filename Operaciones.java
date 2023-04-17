@@ -1,3 +1,4 @@
+
 public class Operaciones {
 
     public double RealizarOperacion(String operador, double primerValor, double segundoValor) {
@@ -48,8 +49,8 @@ public class Operaciones {
     }
 
     private double ElevadaY(double primerValor, double segundoValor) {
-        double nuevoValor = 0;
-        while ((segundoValor -= 1) > 0) {
+        double nuevoValor = 1;
+        while ((segundoValor--) > 0) {
             nuevoValor *= primerValor;
         }
         return nuevoValor;
@@ -60,7 +61,7 @@ public class Operaciones {
     }
 
     private double Raiz(double primerValor) {
-        return primerValor * primerValor;
+        return Math.sqrt(primerValor);
     }
 
     private double Porcentaje(double primerValor) {
