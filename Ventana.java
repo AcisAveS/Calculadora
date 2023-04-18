@@ -96,32 +96,36 @@ public class Ventana extends javax.swing.JFrame implements ActionListener {
             gbc.gridx++;
         }
 
-        gbc.gridx = 0;
+        gbc.gridx = 3;
         gbc.gridy = 2;
 
         // Iteracion para agregar los numero de la calcul
         for (int i = 9; i >= 0; i--) {
 
-            numeros[i] = Boton(numeros[i], i + "");
-            botones.add(numeros[i], gbc);
-            gbc.gridx++;
-
             // Condicion para agregar en la cuarta columna los operadores restantes
             // tambien suma otra posicion en tabla en el eje y, es decir,
             // se agrega otra columna
-            if (gbc.gridx == 3) {
+            if (gbc.gridx == 3 && cont < 9) {
                 operaciones[cont] = Boton(operaciones[cont], operadores.get(0));
                 botones.add(operaciones[cont], gbc);
 
                 operadores.remove(0);
-                gbc.gridx = 0;
-                gbc.gridy++;
+                gbc.gridx--;
                 cont++;
-
-                // Posicionar el numero 0 en el centro de los numeros
-                if (gbc.gridy == 5)
-                    gbc.gridx++;
             }
+
+            numeros[i] = Boton(numeros[i], i + "");
+            botones.add(numeros[i], gbc);
+            gbc.gridx--;
+
+            if (gbc.gridx < 0) {
+                gbc.gridx = 3;
+                gbc.gridy++;
+            }
+
+            // Posicionar el numero 0 en el centro de los numeros
+            if (gbc.gridy == 5)
+                gbc.gridx = 1;
         }
 
         gbc.gridx = 0;
